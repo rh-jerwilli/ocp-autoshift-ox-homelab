@@ -30,7 +30,7 @@ hubClusterSets:
       gitops-source: redhat-operators
       gitops-source-namespace: openshift-marketplace
       ### MetalLB
-      metallb: 'false'
+      metallb: 'true'
       metallb-source: redhat-operators
       metallb-source-namespace: openshift-marketplace
       metallb-channel: stable
@@ -84,7 +84,7 @@ hubClusterSets:
       local-storage-source: redhat-operators
       local-storage-source-namespace: openshift-marketplace
       ### OpenShift Data Foundation
-      odf: 'true'
+      odf: 'false'
       odf-multi-cloud-gateway: standard
       odf-nooba-pvpool: ''
       odf-nooba-store-size: ''
@@ -99,19 +99,19 @@ hubClusterSets:
       odf-source: redhat-operators
       odf-source-namespace: openshift-marketplace
       ### Kubernetes NMState Operator
-      nmstate: 'false'
+      nmstate: 'true'
       # Example nmstate-nncp labels. Label must start with nmstate-nncp
       # also the value must be the name of the config file you want to apply
       # nmstate-nncp-example-bond1: example-bond
       # nmstate-nncp-example-vlan10: example-vlan10
       ### Advanced Cluster Security
-      acs: 'false'
+      acs: 'true'
       acs-egress-connectivity: 'Offline'
       acs-channel: stable
       acs-source: redhat-operators
       acs-source-namespace: openshift-marketplace
       ### Developer Spaces
-      dev-spaces: 'false'
+      dev-spaces: 'true'
       dev-spaces-channel: stable
       dev-spaces-source: redhat-operators
       dev-spaces-source-namespace: openshift-marketplace
@@ -235,7 +235,7 @@ managedClusterSets:
       quay-source: '' # redhat-operators
       quay-source-namespace: '' # openshift-marketplace
       ### Developer OpenShift Gitops
-      gitops-dev: 'false'
+      gitops-dev: 'true'
       gitops-dev-team-test: 'hub' #hub or standalone
       # gitops-dev-team-{INSERT_TEAM_NAME}
       ### Loki
