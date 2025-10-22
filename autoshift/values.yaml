@@ -160,3 +160,10 @@ hubClusterSets:
       compliance-source: redhat-operators
       compliance-source-namespace: openshift-marketplace
       compliance-channel: stable
+      aap: true
+      aap-channel: stable-2.6
+      aap-file_storage_storage_class: nfs-csi
+      aap-file_storage_size: 40G
+      aap-s3-storage: false
+      aap-eda-disabled: false
+      aap-lightspeed-disabled: true
