@@ -1,0 +1,86 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: "{{ .Release.Name }}-policies"
+  namespace: openshift-gitops
+  labels:
+    velero.io/exclude-from-backup: "true"
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: {{ .Values.autoshiftGitRepo }}
+      revision: {{ .Values.autoshiftGitBranchTag }}
+      directories:
+      - path: 'policies/*'
+      {{- if .Values.excludePolicies }}
+      {{- range .Values.excludePolicies }}
+      - path: 'policies/{{ . }}'
+        exclude: true
+      {{- end }}
+      {{- end }}
+  template:
+    metadata:
+      name: '{{ .Release.Name }}-{{"{{"}} .path.basename {{"}}"}}'
+      labels:
+        app: "{{ .Release.Name }}-policies"
+        velero.io/exclude-from-backup: "true"
+    spec:
+      project: default
+      source:
+        path: '{{"{{"}} .path.path {{"}}"}}'
+        repoURL: {{ .Values.autoshiftGitRepo }}
+        targetRevision: {{ .Values.autoshiftGitBranchTag }}
+        helm:
+          valueFiles:
+          - values.yaml
+          valuesObject:
+            selfManagedHubSet: {{ .Values.selfManagedHubSet }}
+            policy_namespace: {{ printf "policies-%s" .Release.Name }}
+            {{- if .Values.hubClusterSets }}
+            hubClusterSets:
+            {{-  range $cluster, $clustervalue := .Values.hubClusterSets }}
+              {{ $cluster }}:
+                labels:
+                {{-  range $labelkey, $labelvalue := $clustervalue.labels }}
+                  {{ $labelkey }}: '{{ $labelvalue }}'
+                {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.managedClusterSets }}
+            managedClusterSets:
+              {{-  range $cluster, $clustervalue := .Values.managedClusterSets }}
+              {{ $cluster }}:
+                labels:
+                {{-  range $labelkey, $labelvalue := $clustervalue.labels }}
+                  {{ $labelkey }}: '{{ $labelvalue }}'
+                {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.clusters }}
+            clusters:
+              {{-  range $cluster, $clustervalue := .Values.clusters }}
+              {{ $cluster }}:
+                labels:
+                {{-  range $labelkey, $labelvalue := $clustervalue.labels }}
+                  {{ $labelkey }}: '{{ $labelvalue }}'
+                {{- end }}
+            {{- end }}
+            {{- end }}
+      ignoreDifferences:
+      - group: "apps"
+        kind: "Project"
+        jsonPointers:
+        - /metadata/annotations
+        - /metadata/labels
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - RespectIgnoreDifferences=true
+        - CreateNamespace=true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: {{ printf "policies-%s" .Release.Name }}
