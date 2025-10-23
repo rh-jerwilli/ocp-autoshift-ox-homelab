@@ -161,7 +161,7 @@ hubClusterSets:
       compliance-source-namespace: openshift-marketplace
       compliance-channel: stable
       aap: true
-      aap-channel: 'stable-2.5'
+      aap-channel: 'stable-2.6'
       aap-install-plan-approval: Automatic
       aap-source: redhat-operators
       aap-source-namespace: openshift-marketplace
